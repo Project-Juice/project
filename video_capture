@@ -1,0 +1,19 @@
+'''
+Created on 18 Mar 2015
+Edited on 4 Apr 2015
+
+@author: Michal
+'''
+import cv2
+
+cam = cv2.VideoCapture(0)       #przechwytywanie wideo, argument to indeks kamery
+
+while True:
+    img = cam.read()[1]         #odczytywanie wideo
+    cv2.imshow('frame',img)     #pokazywanie obrazu na pulpicie
+    
+    if cv2.waitKey(1) == 27:    #wylaczanie okna za pomoca klawisza ESC
+        break
+
+cam.release()                   #uwolnienie przechwytywania
+cv2.destroyAllWindows()         #zamykanie okna
