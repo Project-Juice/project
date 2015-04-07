@@ -1,2 +1,2 @@
 # project
-Nowy projekt dla 
+Nowy projekt dla WTIE i WIM
