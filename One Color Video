@@ -6,20 +6,20 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--img", help="path to the img")
 args = vars(ap.parse_args())
 
-/Urucgomienie kamery w czasie rzeczywistym
+#Uruchomienie kamery w czasie rzeczywistym
 cam = cv2.VideoCapture(0)
-/Jesli kamera jest uruchomina, zczytuje okreslona game kolorow
+#Jesli kamera jest uruchomina, zczytuje okreslona game kolorow
 while True:
     img = cam.read()[1]
     boundaries = [
         ([40, 10, 10], [120, 110, 110])
     ]
-/Dla wiekszych i mniejszych wartosci wygasza obraz
+#Dla wiekszych i mniejszych wartosci wygasza obraz
     for (lower, upper) in boundaries:
         lower = np.array(lower, dtype = "uint8")
         upper = np.array(upper, dtype = "uint8")
         mask = cv2.inRange(img, lower, upper)
-/Wyswietla zmieniony obraz z tylko dana gama kolorow
+#Wyswietla zmieniony obraz z tylko dana gama kolorow
         output = cv2.bitwise_and(img, img, mask = mask)
         cv2.imshow("images", np.hstack([img, output]))
         if cv2.waitKey(5) == 32:
