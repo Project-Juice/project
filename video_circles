@@ -1,0 +1,76 @@
+import cv2
+import numpy as np
+from numpy import str
+import time 
+
+cam = cv2.VideoCapture(1)
+sift = cv2.SIFT()
+
+lower_color = np.array([178,200,200], dtype = "uint8")
+upper_color = np.array([255,255,255], dtype = "uint8")
+
+thresh = 200
+maxValue = 255
+
+x = 10
+
+while True:
+        #Read video
+        ret, img = cam.read()
+        
+        mask = cv2.inRange(img, lower_color, upper_color)
+    
+        output = cv2.bitwise_and(img, img, mask = mask)
+         
+        #oryginalny obraz w kolorach czarno-bialych, ktory posluzy do szukania okregow
+        imgGray=cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
+        #pozbycie sie szumow i wygfladzenie obrazu czarnobialego
+        imgGray = cv2.medianBlur(imgGray,5)
+        imgGray = cv2.medianBlur(imgGray,5)
+        imgGray = cv2.medianBlur(imgGray,5)
+        imgGray = cv2.medianBlur(imgGray,5)
+        imgGray = cv2.medianBlur(imgGray,5)
+        #konwersja na obraz 8bit
+        cimg = cv2.cvtColor(imgGray,cv2.COLOR_GRAY2BGR)
+
+        #funkcja sluzaca do wyszukiwania okregow na obrazie czarnobialym [obraz, metoda wyszukiwania, dp, odleglosc miedzy srodkami okregow, param1, param2, min i maks wielkosc promienia]
+        circles = cv2.HoughCircles(imgGray, cv2.cv.CV_HOUGH_GRADIENT, 2.8, 25, param1 = 100, param2 = 80, minRadius = 10, maxRadius = 50)
+        
+        if circles is not None:
+            circles = np.uint16(np.around(circles))
+            
+            #circles = np.round(circles[0, :]).astype("int")
+            for (x, y, r) in circles[0,:]: 
+                time.sleep(0.02)
+                # rysuje kontur okregu na obrazie orygonalnym 
+                cv2.circle(img, (x, y), r, (0,255,0), 2)
+                # rysuje srodek okregu na obrazie orygonalnym
+                cv2.circle(img, (x, y), 2, (0, 0, 255), 3)
+                
+                center = str(x)+";"+str(y)
+                cv2.putText(img, center, (x,y+20), cv2.FONT_HERSHEY_TRIPLEX, 0.5,(0,0,255),1)
+                #print(x,y,r)
+                
+            #wyswietla obraz [czaernobialy i oryginalny z zaznaczonymi okregami
+            cv2.imshow('detected circles', np.hstack([cimg,img]))
+            cv2.waitKey(1)
+            
+            
+            if cv2.waitKey(1) == 27: 
+                cv2.VideoCapture(1).release()
+                cam.release()
+                cv2.destroyAllWindows()
+                break
+            
+        #cv2.waitKey(0)
+        else:
+            print "Circles were not detected"
+            cv2.imshow('image',img)
+            cv2.waitKey(1)
+            if cv2.waitKey(1) == 27: 
+                cv2.VideoCapture(1).release()
+                cam.release()
+                cv2.destroyAllWindows()
+                break
+                    
+    
