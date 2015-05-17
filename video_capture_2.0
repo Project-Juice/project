@@ -1,0 +1,28 @@
+import numpy as np
+import cv2
+import time
+
+cap_left = cv2.VideoCapture(0)
+cap_right = cv2.VideoCapture(1)
+
+
+# tworzenie okienek
+cv2.namedWindow('left_Webcam', cv2.WINDOW_NORMAL)
+cv2.namedWindow('right_Webcam', cv2.WINDOW_NORMAL)
+cv2.namedWindow('disparity', cv2.WINDOW_NORMAL)
+
+while(cv2.waitKey(1) != 27):
+    ret1, frame_left = cap_left.read()
+    ret2, frame_right = cap_right.read()
+    # szary obraz
+    gray_left = cv2.cvtColor(frame_left, cv2.COLOR_BGR2GRAY)
+    gray_right = cv2.cvtColor(frame_right, cv2.COLOR_BGR2GRAY)
+    cv2.imshow('left_Webcam', gray_left)
+    cv2.imshow('right_Webcam', gray_right)
+    stereo = cv2.StereoBM(50,ndisparities=32, SADWindowSize=51) #ogarnac flagi!!!!
+    disparity = stereo.compute(gray_left, gray_right)
+    cv2.imshow('disparity', disparity)
+
+cap_left.release()
+cap_right.release()
+cv2.destroyAllWindows()
